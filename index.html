@@ -29,15 +29,31 @@
         .confetti { position: absolute; width: 10px; height: 10px; animation: fall linear forwards; z-index: 99; }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
 
-        /* بخاخ الثلج - تم التعديل ليغطي الشاشة */
+        /* بخاخ الثلج كثيف جداً */
         #snow-man { position: fixed; bottom: -200px; right: 20px; font-size: 80px; transition: bottom 0.5s; z-index: 200; pointer-events: none; }
-        .snow-particle { position: fixed; background: white; border-radius: 50%; pointer-events: none; z-index: 201; filter: blur(1px); }
+        .snow-particle { position: fixed; background: white; border-radius: 50%; pointer-events: none; z-index: 201; filter: blur(1px); box-shadow: 0 0 5px white; }
 
         /* الصفحة 5: تيك تاك تو */
         .grid { display: grid; grid-template-columns: repeat(3, 100px); gap: 5px; margin: 20px auto; }
         .cell { width: 100px; height: 100px; background: white; border: 2px solid var(--primary); font-size: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer; border-radius: 10px; }
         .controls { margin-bottom: 20px; }
         #memo-msg { color: var(--primary); font-weight: bold; margin-top: 10px; display: none; }
+
+        /* الصفحة 6: الرسالة الكبيرة */
+        .scroll-container { 
+            width: 90%; 
+            max-height: 80vh; 
+            overflow-y: auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            line-height: 1.8;
+            font-size: 18px;
+            color: #444;
+            text-align: right;
+        }
+        #page6 h2 { color: var(--primary); }
     </style>
 </head>
 <body>
@@ -51,11 +67,12 @@
         <h2>اسم حبيبة الشاعر ميمو شكسبير هو:</h2>
         <input type="text" id="answer-input" placeholder="اكتب الإجابة هنا...">
         <button class="btn" onclick="checkAnswer()">تأكيد</button>
-        <p id="error-msg" style="color: red; display: none;">ما في غيرك مالك 🙂</p>
+        <p id="error-msg" style="color: red; display: none;">ما في غيرك 
+        🙂</p>
     </div>
 
     <div id="page3" class="page">
-        <h2>طعمي الحصان 5 مرات عشان يرضى 😂😂😂</h2>
+        <h2>طعمي الحصان عشان يرضى عنك 😂😂😂</h2>
         <div id="hunger-bar-container"><div id="hunger-fill"></div></div>
         <div id="horse">🐴</div>
         <div id="pasta">🍝</div>
@@ -77,11 +94,25 @@
         <div id="board-container" style="position: relative;">
             <div class="grid" id="board"></div>
         </div>
-        <p id="memo-msg">لأني ميمو شكسبير، طبيعي أفوز أو تتعادلي معي! 😎</p>
+        <p id="memo-msg">مش بحكيلك قوية 😂😂</p>
         <button class="btn" id="how-btn" style="display:none" onclick="document.getElementById('memo-msg').style.display='block'">كيف 😂</button>
         <button class="btn" onclick="resetGame()">إعادة اللعب</button>
+        <button class="btn" id="go-to-letter" style="display:none; background: #4caf50;" onclick="showPage(6)">اقرئي هاي الرسالة 🥺❤️</button>
         
-        <div id="snow-man">🕺🍰</div>
+        <div id="snow-man">⛄</div>
+    </div>
+
+    <div id="page6" class="page">
+        <h2>رسالة من قلبي 🥺❤️</h2>
+        <div class="scroll-container">
+            بعرف يا قلبي انه تعبانه وانه الك فترة بتتعبي كثير 🥺 ويعطيكي الف الف الف الف الف الف الف الف الف الف عافية يارب 🥺🥺 وكمان بعرف انه زعلتي مني صح بدون سبب بس برضه اسف انه زعلتك 🥺 بحبك انا وبتاسفلك لانه الحق دايما معك حتى لو مو معك بده يصير معك بتعرفي ليش بكل بساطه انتي حبيبتي وبطلعلك كل اشي يا روحي ونظر عيني 🥺 وان شاء الله الموقع عجبك 🙂 بس هاض لا يجاوب على سؤالي الحصان باكل معكرونه 🙂😂😂 ايوه هيك اضحكي 😂😂 وفي كمان شغله 🙂 هسا لما تكملي باقي الرسالة راح تلاقي فيديو و فويز كمان وراح اخجلك يعني 🙂🙂🤣 بس ما تخافي مو كثير بس شوي 🙂 ومن حقي اطلب شغله يعني 🙂 لما تخلصي بدي اشوف مين فاز باللعبه 😂😂 بس ابعثيها ستريك عشان العداد 😶‍🌫️😶‍🌫️😶‍🌫️ يلا يا حلوة اسمعي علي 🙂  انا ببببببحححححببببببككككك بتعرفي شو يعني يعني بحبككككك بهوااااااكككي بعششششقك 🥺🥺🥺♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️
+            <br><br>
+            ولك تخيلي دايما ببالي انتي يعني افتحي راسي بتلاقي اسمك جوا 🙂♥️♥️♥️♥️
+            <br><br>
+            ولك نيييييييياااااااللللللي نيييييياااااالللللييي 😂♥️♥️ بكفي هالغمازات الحلوين يختتتشششششييييي😂😂😂 ولك متتتتىىىىىى بتصيري الي 🙂♥️ والله ما تنامي غير وانا حاضنك انا بفرجيكي 😂😂♥️♥️♥️💞
+        يلا روحي على الشات اشتقتلك يعني 😂😂 واهم اشي الستريك يا حلوة 😶‍🌫️😶‍🌫️😶‍🌫️😂😂😂
+        </div>
+        <button class="btn" onclick="showPage(5)">رجوع للعبة</button>
     </div>
 
     <script>
@@ -127,8 +158,8 @@
             pasta.onmousedown = pasta.ontouchstart = (e) => {
                 e.preventDefault();
                 let move = (ev) => {
-                    let clientX = ev.clientX || ev.touches[0].clientX;
-                    let clientY = ev.clientY || ev.touches[0].clientY;
+                    let clientX = ev.clientX || (ev.touches ? ev.touches[0].clientX : 0);
+                    let clientY = ev.clientY || (ev.touches ? ev.touches[0].clientY : 0);
                     pasta.style.left = clientX + 'px'; pasta.style.top = clientY + 'px';
                     let h = horse.getBoundingClientRect();
                     let p = pasta.getBoundingClientRect();
@@ -142,14 +173,14 @@
                     }
                 };
                 document.addEventListener('mousemove', move);
-                document.addEventListener('touchmove', move);
+                document.addEventListener('touchmove', move, {passive: false});
                 document.onmouseup = document.ontouchend = () => { document.removeEventListener('mousemove', move); document.removeEventListener('touchmove', move); };
             };
         }
 
         function startEmojiRain(e1, e2) {
             const container = document.querySelector('.page.active');
-            for(let i=0; i<40; i++) {
+            for(let i=0; i<30; i++) {
                 setTimeout(() => {
                     let e = document.createElement('div');
                     e.className = 'emoji-rain';
@@ -158,18 +189,18 @@
                     e.style.animationDuration = (Math.random() * 2 + 2) + 's';
                     container.appendChild(e);
                     setTimeout(() => e.remove(), 4000);
-                }, i * 100);
+                }, i * 150);
             }
             if(document.getElementById('next-to-game')) document.getElementById('next-to-game').style.display = 'block';
         }
 
         function shootConfetti() {
             const colors = ['#ff4d6d', '#ff0', '#0f0', '#00f', '#f0f'];
-            for(let i=0; i<100; i++) {
+            for(let i=0; i<60; i++) {
                 let c = document.createElement('div');
                 c.className = 'confetti';
                 c.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-                c.style.left = (Math.random() > 0.5 ? Math.random()*20 : 80 + Math.random()*20) + 'vw';
+                c.style.left = (Math.random() * 100) + 'vw';
                 c.style.top = '-10px';
                 c.style.animationDuration = (Math.random()*3 + 2) + 's';
                 document.getElementById('page5').appendChild(c);
@@ -177,67 +208,48 @@
             }
         }
 
-        // --- منطق بخاخ الثلج المطور ليغطي الشاشة ---
         function spraySnow() {
             const man = document.getElementById('snow-man');
             man.style.bottom = "20px";
             let sprayCount = 0;
-            let interval = setInterval(() => {
-                for(let i=0; i<8; i++) { // زيادة عدد الجزيئات
+            let sprayInterval = setInterval(() => {
+                for(let i=0; i<15; i++) {
                     let s = document.createElement('div');
                     s.className = 'snow-particle';
-                    let size = Math.random() * 8 + 4;
+                    let size = Math.random() * 10 + 5;
                     s.style.width = size + 'px';
                     s.style.height = size + 'px';
-                    
-                    // ينطلق من مكان الرجل
                     let startX = window.innerWidth - 80;
                     let startY = window.innerHeight - 80;
-                    
-                    // اتجاهات عشوائية واسعة لتغطية الشاشة بالكامل
-                    let angle = (Math.random() * 120 + 120) * (Math.PI / 180); 
-                    let velocity = Math.random() * 15 + 10;
+                    let angle = (Math.random() * 150 + 105) * (Math.PI / 180); 
+                    let velocity = Math.random() * 20 + 15;
                     let vx = Math.cos(angle) * velocity;
                     let vy = Math.sin(angle) * velocity;
-                    
                     document.body.appendChild(s);
-                    
                     let posX = startX;
                     let posY = startY;
-                    
+                    let life = 0;
                     let moveSnow = setInterval(() => {
-                        posX += vx; 
-                        posY += vy;
-                        // محاكاة الجاذبية الخفيفة للثلج
-                        vy += 0.1; 
-                        
-                        s.style.left = posX + 'px'; 
-                        s.style.top = posY + 'px';
-                        s.style.opacity = (1 - (posY/window.innerHeight)); // يختفي تدريجياً
-
-                        if(posX < -50 || posX > window.innerWidth + 50 || posY > window.innerHeight + 50 || posY < -50) { 
-                            s.remove(); 
-                            clearInterval(moveSnow); 
+                        posX += vx; posY += vy; vy += 0.15; life++;
+                        s.style.left = posX + 'px'; s.style.top = posY + 'px';
+                        if(life > 100 || posX < -100 || posX > window.innerWidth + 100 || posY > window.innerHeight + 100) { 
+                            s.remove(); clearInterval(moveSnow); 
                         }
                     }, 20);
                 }
                 sprayCount++;
-                if(sprayCount > 60) { clearInterval(interval); man.style.bottom = "-200px"; }
-            }, 40);
+                if(sprayCount > 50) { 
+                    clearInterval(sprayInterval); 
+                    setTimeout(() => { man.style.bottom = "-200px"; }, 1000);
+                }
+            }, 50);
         }
 
         let board = ["", "", "", "", "", "", "", "", ""];
-        const boardEl = document.getElementById('board');
-        const diffInput = document.getElementById('difficulty');
-        const diffLabel = document.getElementById('diff-label');
-
-        diffInput.oninput = () => {
-            const levels = ["", "سهل", "وسط", "صعب جداً"];
-            diffLabel.innerText = levels[diffInput.value];
-            resetGame();
-        };
+        let gameActive = true; 
 
         function initGame() {
+            const boardEl = document.getElementById('board');
             boardEl.innerHTML = '';
             board.forEach((cell, i) => {
                 let div = document.createElement('div');
@@ -249,18 +261,19 @@
         }
 
         function playerMove(i) {
-            if (board[i] === "" && !checkWinner(board)) {
+            if (board[i] === "" && gameActive) {
                 board[i] = "O";
                 initGame();
-                let win = checkWinner(board);
-                if (win) handleEnd(win);
-                else setTimeout(computerMove, 500);
+                let result = checkWinner(board);
+                if (result) handleEnd(result);
+                else setTimeout(computerMove, 400);
             }
         }
 
         function computerMove() {
+            if(!gameActive) return;
             let move;
-            let level = diffInput.value;
+            let level = document.getElementById('difficulty').value;
             if (level == "1") move = randomMove();
             else if (level == "2") move = Math.random() > 0.5 ? bestMove() : randomMove();
             else move = bestMove();
@@ -268,8 +281,8 @@
             if (move !== null) {
                 board[move] = "X";
                 initGame();
-                let win = checkWinner(board);
-                if (win) handleEnd(win);
+                let result = checkWinner(board);
+                if (result) handleEnd(result);
             }
         }
 
@@ -305,7 +318,9 @@
         }
 
         function handleEnd(result) {
+            gameActive = false; 
             document.getElementById('how-btn').style.display = 'inline-block';
+            document.getElementById('go-to-letter').style.display = 'inline-block';
             startEmojiRain('🎊', '🎉');
             shootConfetti();
             spraySnow();
@@ -313,7 +328,9 @@
 
         function resetGame() {
             board = ["", "", "", "", "", "", "", "", ""];
+            gameActive = true;
             document.getElementById('how-btn').style.display = 'none';
+            document.getElementById('go-to-letter').style.display = 'none';
             document.getElementById('memo-msg').style.display = 'none';
             initGame();
         }
