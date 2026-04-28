@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع ميمو شكسبير المطوّر</title>
+    <style>
+        :root { --primary: #ff4d6d; --bg: #ffeef8; }
+        body { margin: 0; font-family: 'Arial', sans-serif; background-color: var(--bg); overflow: hidden; text-align: center; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .page { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; align-items: center; position: relative; animation: fadeIn 0.5s ease; }
+        .active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* الصفحة 1: القلب المتحرك */
+        #heart-btn { font-size: 80px; cursor: pointer; position: absolute; transition: 0.1s; user-select: none; z-index: 5; }
+        
+        /* الصفحة 2: السؤال */
+        input { padding: 10px; font-size: 18px; border-radius: 10px; border: 2px solid var(--primary); outline: none; }
+        .btn { padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; margin-top: 10px; z-index: 20; }
+
+        /* الصفحة 3: الحصان والمقياس */
+        #hunger-bar-container { width: 200px; height: 20px; background: #ddd; border-radius: 10px; margin: 20px auto; overflow: hidden; }
+        #hunger-fill { width: 0%; height: 100%; background: #4caf50; transition: 0.3s; }
+        #pasta { font-size: 50px; cursor: grab; position: absolute; touch-action: none; z-index: 10; }
+        #horse { font-size: 100px; transition: transform 0.2s; }
+
+        /* الصفحة 4 و 5: المطر والمؤثرات */
+        .emoji-rain { position: absolute; top: -50px; font-size: 30px; animation: fall linear forwards; z-index: 100; pointer-events: none; }
+        .confetti { position: absolute; width: 10px; height: 10px; animation: fall linear forwards; z-index: 99; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        /* بخاخ الثلج - تم التعديل ليغطي الشاشة */
+        #snow-man { position: fixed; bottom: -200px; right: 20px; font-size: 80px; transition: bottom 0.5s; z-index: 200; pointer-events: none; }
+        .snow-particle { position: fixed; background: white; border-radius: 50%; pointer-events: none; z-index: 201; filter: blur(1px); }
+
+        /* الصفحة 5: تيك تاك تو */
+        .grid { display: grid; grid-template-columns: repeat(3, 100px); gap: 5px; margin: 20px auto; }
+        .cell { width: 100px; height: 100px; background: white; border: 2px solid var(--primary); font-size: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer; border-radius: 10px; }
+        .controls { margin-bottom: 20px; }
+        #memo-msg { color: var(--primary); font-weight: bold; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="page1" class="page active">
+        <h2 id="heart-msg">امسك القلب واضغطه 3 مرات! 🏃‍♂️</h2>
+        <div id="heart-btn" onclick="handleHeartClick()">❤️</div>
+    </div>
+
+    <div id="page2" class="page">
+        <h2>اسم حبيبة الشاعر ميمو شكسبير هو:</h2>
+        <input type="text" id="answer-input" placeholder="اكتب الإجابة هنا...">
+        <button class="btn" onclick="checkAnswer()">تأكيد</button>
+        <p id="error-msg" style="color: red; display: none;">حاول مرة أخرى يا بطل!</p>
+    </div>
+
+    <div id="page3" class="page">
+        <h2>طعمي الحصان 5 مرات (اسحب المعكرونة لفمه)</h2>
+        <div id="hunger-bar-container"><div id="hunger-fill"></div></div>
+        <div id="horse">🐴</div>
+        <div id="pasta">🍝</div>
+    </div>
+
+    <div id="page4" class="page">
+        <p style="font-size: 20px; padding: 20px;">عشان هيك حبي مبرمج وخصوصا ميمو 😂💗 يلا يا قمري انا مش راح اكمل غير تا تضحكي اذا ما بتضحكي بعضك 🙂</p>
+        <button class="btn" style="font-size: 30px;" onclick="startEmojiRain('😂', '🤣')">😂🤣</button>
+        <button id="next-to-game" class="btn" style="display:none; position: fixed; bottom: 50px;" onclick="showPage(5)">كملي يا عسل ⬅️</button>
+    </div>
+
+    <div id="page5" class="page">
+        <h3 id="game-status">صوريلي النتيجه 🙂</h3>
+        <div class="controls">
+            <label>مستوى الذكاء: </label>
+            <input type="range" id="difficulty" min="1" max="3" value="1">
+            <span id="diff-label">سهل</span>
+        </div>
+        <div id="board-container" style="position: relative;">
+            <div class="grid" id="board"></div>
+        </div>
+        <p id="memo-msg">لأني ميمو شكسبير، طبيعي أفوز أو تتعادلي معي! 😎</p>
+        <button class="btn" id="how-btn" style="display:none" onclick="document.getElementById('memo-msg').style.display='block'">كيف 😂</button>
+        <button class="btn" onclick="resetGame()">إعادة اللعب</button>
+        
+        <div id="snow-man">🕺💨</div>
+    </div>
+
+    <script>
+        function showPage(num) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page' + num).classList.add('active');
+            if(num === 1) moveHeart();
+            if(num === 3) resetPasta();
+            if(num === 5) initGame();
+        }
+
+        let clicks = 0;
+        function moveHeart() {
+            const btn = document.getElementById('heart-btn');
+            if(!btn) return;
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 100);
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+        }
+        function handleHeartClick() {
+            clicks++;
+            if (clicks >= 3) showPage(2);
+            else moveHeart();
+        }
+        setInterval(() => { if(document.getElementById('page1').classList.contains('active')) moveHeart() }, 800);
+
+        function checkAnswer() {
+            const valid = ["حلوش", "حبيبتي", "قمري", "نجومي", "عسولتي", "حبوشتي", "حلولتي", "بنوتتي", "باتمانتي", "حلا"];
+            if (valid.includes(document.getElementById('answer-input').value.trim())) showPage(3);
+            else document.getElementById('error-msg').style.display = 'block';
+        }
+
+        let meals = 0;
+        function resetPasta() {
+            const pasta = document.getElementById('pasta');
+            pasta.style.left = "50%"; pasta.style.top = "80%";
+            initDrag();
+        }
+        function initDrag() {
+            const pasta = document.getElementById('pasta');
+            const horse = document.getElementById('horse');
+            pasta.onmousedown = pasta.ontouchstart = (e) => {
+                e.preventDefault();
+                let move = (ev) => {
+                    let clientX = ev.clientX || ev.touches[0].clientX;
+                    let clientY = ev.clientY || ev.touches[0].clientY;
+                    pasta.style.left = clientX + 'px'; pasta.style.top = clientY + 'px';
+                    let h = horse.getBoundingClientRect();
+                    let p = pasta.getBoundingClientRect();
+                    if (!(p.right < h.left || p.left > h.right || p.bottom < h.top || p.top > h.bottom)) {
+                        meals++;
+                        document.getElementById('hunger-fill').style.width = (meals * 20) + '%';
+                        document.removeEventListener('mousemove', move);
+                        document.removeEventListener('touchmove', move);
+                        if (meals >= 5) setTimeout(() => showPage(4), 500);
+                        else { horse.innerText = "😋"; setTimeout(()=> {horse.innerText="🐴"; resetPasta()}, 500); }
+                    }
+                };
+                document.addEventListener('mousemove', move);
+                document.addEventListener('touchmove', move);
+                document.onmouseup = document.ontouchend = () => { document.removeEventListener('mousemove', move); document.removeEventListener('touchmove', move); };
+            };
+        }
+
+        function startEmojiRain(e1, e2) {
+            const container = document.querySelector('.page.active');
+            for(let i=0; i<40; i++) {
+                setTimeout(() => {
+                    let e = document.createElement('div');
+                    e.className = 'emoji-rain';
+                    e.innerText = Math.random() > 0.5 ? e1 : e2;
+                    e.style.left = Math.random() * 100 + 'vw';
+                    e.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    container.appendChild(e);
+                    setTimeout(() => e.remove(), 4000);
+                }, i * 100);
+            }
+            if(document.getElementById('next-to-game')) document.getElementById('next-to-game').style.display = 'block';
+        }
+
+        function shootConfetti() {
+            const colors = ['#ff4d6d', '#ff0', '#0f0', '#00f', '#f0f'];
+            for(let i=0; i<100; i++) {
+                let c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+                c.style.left = (Math.random() > 0.5 ? Math.random()*20 : 80 + Math.random()*20) + 'vw';
+                c.style.top = '-10px';
+                c.style.animationDuration = (Math.random()*3 + 2) + 's';
+                document.getElementById('page5').appendChild(c);
+                setTimeout(() => c.remove(), 5000);
+            }
+        }
+
+        // --- منطق بخاخ الثلج المطور ليغطي الشاشة ---
+        function spraySnow() {
+            const man = document.getElementById('snow-man');
+            man.style.bottom = "20px";
+            let sprayCount = 0;
+            let interval = setInterval(() => {
+                for(let i=0; i<8; i++) { // زيادة عدد الجزيئات
+                    let s = document.createElement('div');
+                    s.className = 'snow-particle';
+                    let size = Math.random() * 8 + 4;
+                    s.style.width = size + 'px';
+                    s.style.height = size + 'px';
+                    
+                    // ينطلق من مكان الرجل
+                    let startX = window.innerWidth - 80;
+                    let startY = window.innerHeight - 80;
+                    
+                    // اتجاهات عشوائية واسعة لتغطية الشاشة بالكامل
+                    let angle = (Math.random() * 120 + 120) * (Math.PI / 180); 
+                    let velocity = Math.random() * 15 + 10;
+                    let vx = Math.cos(angle) * velocity;
+                    let vy = Math.sin(angle) * velocity;
+                    
+                    document.body.appendChild(s);
+                    
+                    let posX = startX;
+                    let posY = startY;
+                    
+                    let moveSnow = setInterval(() => {
+                        posX += vx; 
+                        posY += vy;
+                        // محاكاة الجاذبية الخفيفة للثلج
+                        vy += 0.1; 
+                        
+                        s.style.left = posX + 'px'; 
+                        s.style.top = posY + 'px';
+                        s.style.opacity = (1 - (posY/window.innerHeight)); // يختفي تدريجياً
+
+                        if(posX < -50 || posX > window.innerWidth + 50 || posY > window.innerHeight + 50 || posY < -50) { 
+                            s.remove(); 
+                            clearInterval(moveSnow); 
+                        }
+                    }, 20);
+                }
+                sprayCount++;
+                if(sprayCount > 60) { clearInterval(interval); man.style.bottom = "-200px"; }
+            }, 40);
+        }
+
+        let board = ["", "", "", "", "", "", "", "", ""];
+        const boardEl = document.getElementById('board');
+        const diffInput = document.getElementById('difficulty');
+        const diffLabel = document.getElementById('diff-label');
+
+        diffInput.oninput = () => {
+            const levels = ["", "سهل", "وسط", "صعب جداً"];
+            diffLabel.innerText = levels[diffInput.value];
+            resetGame();
+        };
+
+        function initGame() {
+            boardEl.innerHTML = '';
+            board.forEach((cell, i) => {
+                let div = document.createElement('div');
+                div.className = 'cell';
+                div.innerText = cell;
+                div.onclick = () => playerMove(i);
+                boardEl.appendChild(div);
+            });
+        }
+
+        function playerMove(i) {
+            if (board[i] === "" && !checkWinner(board)) {
+                board[i] = "O";
+                initGame();
+                let win = checkWinner(board);
+                if (win) handleEnd(win);
+                else setTimeout(computerMove, 500);
+            }
+        }
+
+        function computerMove() {
+            let move;
+            let level = diffInput.value;
+            if (level == "1") move = randomMove();
+            else if (level == "2") move = Math.random() > 0.5 ? bestMove() : randomMove();
+            else move = bestMove();
+
+            if (move !== null) {
+                board[move] = "X";
+                initGame();
+                let win = checkWinner(board);
+                if (win) handleEnd(win);
+            }
+        }
+
+        function randomMove() {
+            let avail = board.map((v, i) => v === "" ? i : null).filter(v => v !== null);
+            return avail.length > 0 ? avail[Math.floor(Math.random() * avail.length)] : null;
+        }
+
+        function bestMove() {
+            for(let i=0; i<9; i++) {
+                if(board[i] === "") {
+                    board[i] = "X";
+                    if(checkWinner(board) === "X") { board[i] = ""; return i; }
+                    board[i] = "";
+                }
+            }
+            for(let i=0; i<9; i++) {
+                if(board[i] === "") {
+                    board[i] = "O";
+                    if(checkWinner(board) === "O") { board[i] = ""; return i; }
+                    board[i] = "";
+                }
+            }
+            return randomMove();
+        }
+
+        function checkWinner(b) {
+            const wins = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
+            for (let s of wins) {
+                if (b[s[0]] && b[s[0]] === b[s[1]] && b[s[0]] === b[s[2]]) return b[s[0]];
+            }
+            return b.includes("") ? null : "T";
+        }
+
+        function handleEnd(result) {
+            document.getElementById('how-btn').style.display = 'inline-block';
+            startEmojiRain('🎊', '🎉');
+            shootConfetti();
+            spraySnow();
+        }
+
+        function resetGame() {
+            board = ["", "", "", "", "", "", "", "", ""];
+            document.getElementById('how-btn').style.display = 'none';
+            document.getElementById('memo-msg').style.display = 'none';
+            initGame();
+        }
+
+        window.onload = moveHeart;
+    </script>
+</body>
+</html>
